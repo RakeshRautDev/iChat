@@ -3,9 +3,20 @@ import express from "express";
 import connectDB from "./lib/db.js";
 import cors from "cors"
 import {clerkMiddleware} from '@clerk/express'
+import clerkWebhook from "./webhooks/clerk.webhook.js"
+
+//Routes import
+import authRoutes from "./routes/auth.routes.js"
+
+
+//Variable initialisation
 const app=express();
 const PORT=process.env.PORT;
 const FRONTEND_URL=process.env.FRONTEND_URL;
+
+app.use("/api/webhooks/clerk",express.raw({type:"application/json"}),clerkWebhook)
+
+
 app.use(express.json())
 app.use(cors(
     {
@@ -19,6 +30,10 @@ app.get("/health",(req,res)=>{
     
     res.status(200).json({ok:true});
 })
+
+
+//Routes
+app.use("/api/auth",authRoutes)
 
 app.listen(PORT,()=>{
     connectDB();
