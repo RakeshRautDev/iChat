@@ -7,6 +7,7 @@ import clerkWebhook from "./webhooks/clerk.webhook.js"
 
 //Routes import
 import authRoutes from "./routes/auth.routes.js"
+import messageRoutes from "./routes/message.routes.js"
 
 
 //Variable initialisation
@@ -34,6 +35,7 @@ app.get("/health",(req,res)=>{
 
 //Routes
 app.use("/api/auth",authRoutes)
+app.use("/api/messages",messageRoutes);
 
 app.listen(PORT,()=>{
     connectDB();

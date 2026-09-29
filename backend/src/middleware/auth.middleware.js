@@ -21,3 +21,4 @@ export async function protectedRoute(req,res,next){
         res.status(500).json({message:"Internal Server Error"});
     }
 }
+
