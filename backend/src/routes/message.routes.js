@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { protectedRoute,getConversationForSidebar,getMessages,sendMessages } from "../middleware/auth.middleware.js";
+import { protectedRoute } from "../middleware/auth.middleware.js";
 import { upload } from './../middleware/upload.middleware.js';
+import {getConversationForSidebar,getMessages,sendMessages,getUsersForSidebar} from "../controllers/message.controller.js"
 
 const router=Router();
 // /api/messages
@@ -12,6 +13,6 @@ router.get("/conversation",getConversationForSidebar)
 router.get("/:id",getMessages)
 router.post("/send/:id",upload.single("media"),sendMessages)
 
-router.post()
+
 
 export default router;

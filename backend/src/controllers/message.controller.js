@@ -1,6 +1,6 @@
 import userModel from "../models/user.model.js";
 import messageModel from './../models/message.model.js';
-import hasImageKitConfig, { uploadChatMedia } from "../lib/imagekit.js"
+import {hasImageKitConfig , uploadChatMedia } from "../lib/imagekit.js"
 import { getReceiverSocketId,io } from "../lib/socket.js";
 
 export const getUsersForSidebar=async(req,res,next)=>{
@@ -115,7 +115,7 @@ export const sendMessages=async(req,res)=>{
        const receiverSocketId=getReceiverSocketId(receiverId)
        if(receiverSocketId)io.to(receiverSocketId).emit("New Message",newMessage);
 
-       
+
         res.status(201).json(newMessage);
        
     } catch (error) {

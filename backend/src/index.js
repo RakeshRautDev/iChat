@@ -8,7 +8,7 @@ import clerkWebhook from "./webhooks/clerk.webhook.js"
 //Routes import
 import authRoutes from "./routes/auth.routes.js"
 import messageRoutes from "./routes/message.routes.js"
-
+import { app,server } from "./lib/socket.js";
 
 //Variable initialisation
 
