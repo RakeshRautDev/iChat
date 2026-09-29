@@ -11,7 +11,7 @@ import messageRoutes from "./routes/message.routes.js"
 
 
 //Variable initialisation
-const app=express();
+
 const PORT=process.env.PORT;
 const FRONTEND_URL=process.env.FRONTEND_URL;
 
@@ -37,7 +37,7 @@ app.get("/health",(req,res)=>{
 app.use("/api/auth",authRoutes)
 app.use("/api/messages",messageRoutes);
 
-app.listen(PORT,()=>{
+server.listen(PORT,()=>{
     connectDB();
     console.log("Server is running on 3000");
 })

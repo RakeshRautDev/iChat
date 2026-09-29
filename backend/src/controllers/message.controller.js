@@ -1,6 +1,7 @@
 import userModel from "../models/user.model.js";
 import messageModel from './../models/message.model.js';
 import hasImageKitConfig, { uploadChatMedia } from "../lib/imagekit.js"
+import { getReceiverSocketId,io } from "../lib/socket.js";
 
 export const getUsersForSidebar=async(req,res,next)=>{
     try {
@@ -110,6 +111,11 @@ export const sendMessages=async(req,res)=>{
        const newMessage=await messageModel.create({senderId,receiverId,text,imageUrl,videoUrl});
       
        //todo: add sockets to send so user dont have to reload
+
+       const receiverSocketId=getReceiverSocketId(receiverId)
+       if(receiverSocketId)io.to(receiverSocketId).emit("New Message",newMessage);
+
+       
         res.status(201).json(newMessage);
        
     } catch (error) {
