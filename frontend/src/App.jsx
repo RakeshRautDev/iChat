@@ -1,20 +1,38 @@
 import './App.css'
 import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/react'
 
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ProtectedRoute from './component/ProtectedRoute';
+import PublicRoute from './component/PublicRoute';
+import AuthComponent from './component/AuthComponent';
+import ChatPage from './component/ChatPage';
+
 function App() {
+
+   const router=createBrowserRouter([
+    {path:"/",
+      element:<PublicRoute>
+
+        <AuthComponent/>
+      </PublicRoute>
+    },
+    {
+      path:"/chat",
+      element:(
+        <ProtectedRoute>
+          <ChatPage/>
+        </ProtectedRoute>
+      )
+    }
+   ])
   return (
     <>
-      <header className='flex gap-4 w-full h-screen bg-slate-900 justify-center items-center'>
-        <Show when="signed-out">
-          <SignInButton className="px-4 py-2 rounded bg-white text-2xl text-black" mode='modal'/>
-          <SignUpButton className="px-4 py-2 rounded bg-white text-2xl text-black"  mode='modal'/>
-        </Show>
-        <Show when="signed-in">
-          <UserButton />
-        </Show>
-      </header>
+    <RouterProvider router={router}/>
     </>
   )
 }
 
 export default App
+
+
+

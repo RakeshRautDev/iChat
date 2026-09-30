@@ -16,6 +16,7 @@ export async function protectedRoute(req,res,next){
             return;
         }
         req.user=user;
+        next();
     } catch (error) {
         console.log("Errror in Protected Route",error.message);
         res.status(500).json({message:"Internal Server Error"});

@@ -5,7 +5,7 @@ import { getReceiverSocketId,io } from "../lib/socket.js";
 
 export const getUsersForSidebar=async(req,res,next)=>{
     try {
-        const loggedInUserId=req.user.id;
+        const loggedInUserId=req.user._id;
 
         const filteredUsers=await userModel.find({_id:{$ne:loggedInUserId}}).select("-clerkId");
         res.status(200).json(filteredUsers);
@@ -47,7 +47,7 @@ export const getConversationForSidebar = async (req, res) => {
             },
             {
                 $lookup:{
-                    from:"users",localField:"_id",foreignField:_id,as:"user"
+                    from:"users",localField:"_id",foreignField:"_id",as:"user"
                 },
                 
             },
@@ -108,7 +108,7 @@ export const sendMessages=async(req,res)=>{
         }
 
 
-       const newMessage=await messageModel.create({senderId,receiverId,text,imageUrl,videoUrl});
+       const newMessage=await messageModel.create({senderId,receiverId,text,image:imageUrl,video:videoUrl});
       
        //todo: add sockets to send so user dont have to reload
 
