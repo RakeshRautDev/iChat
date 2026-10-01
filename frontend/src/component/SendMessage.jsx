@@ -4,7 +4,7 @@ import axios from 'axios';
 import { IoImageOutline } from "react-icons/io5";
 import { IoMdSend } from "react-icons/io";
 
-const SendMessage = ({ activeUser }) => {
+const SendMessage = ({ activeUser, setConvo }) => {
     const inputRef = useRef(null);
 
     const { getToken } = useAuth();
@@ -15,13 +15,8 @@ const SendMessage = ({ activeUser }) => {
     const sendMessage = async (e) => {
         e.preventDefault();
 
-        if (!messageText.trim() && !selectedFile) {
-            return;
-        }
-
-        if (!activeUser?._id) {
-            return;
-        }
+        if (!messageText.trim() && !selectedFile) return;
+        if (!activeUser?._id) return;
 
         try {
             const formData = new FormData();
@@ -35,7 +30,6 @@ const SendMessage = ({ activeUser }) => {
             }
 
             const token = await getToken();
-            console.log(formData)
 
             const res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/api/messages/send/${activeUser._id}`,
@@ -47,12 +41,20 @@ const SendMessage = ({ activeUser }) => {
                 }
             );
 
-            console.log(res.data);
+            console.log("[SendMessage] sent:", res.data);
+
+            // ── Optimistically add the sent message to the local convo ──────────
+            // This ensures the SENDER sees their own message immediately without
+            // waiting for a socket echo. The receiver already gets it via socket.
+            setConvo((prev) => {
+                const alreadyExists = prev.some((m) => m._id === res.data._id);
+                if (alreadyExists) return prev;
+                return [...prev, res.data];
+            });
 
             setMessageText("");
             setSelectedFile(null);
-
-            inputRef.current.value = "";
+            if (inputRef.current) inputRef.current.value = "";
 
         } catch (error) {
             console.error("Error sending message:", error);
@@ -61,15 +63,10 @@ const SendMessage = ({ activeUser }) => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-
         if (!file) return;
 
-        if (
-            file.type.startsWith("image/") ||
-            file.type.startsWith("video/")
-        ) {
+        if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
             setSelectedFile(file);
-            console.log("Selected:", file);
         }
     };
 

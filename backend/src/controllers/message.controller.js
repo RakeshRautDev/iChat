@@ -121,12 +121,14 @@ export const sendMessages=async(req,res)=>{
 
 
        const newMessage=await messageModel.create({senderId,receiverId,text,image:imageUrl,video:videoUrl});
-      
-       //todo: add sockets to send so user dont have to reload
 
-       const receiverSocketId=getReceiverSocketId(receiverId)
-       if(receiverSocketId)io.to(receiverSocketId).emit("New Message",newMessage);
+       // Emit to receiver so they see the message in real-time
+       const receiverSocketId=getReceiverSocketId(receiverId);
+       if(receiverSocketId) io.to(receiverSocketId).emit("newMessage", newMessage);
 
+       // Also emit to sender (covers multiple tabs / devices)
+       const senderSocketId=getReceiverSocketId(String(senderId));
+       if(senderSocketId) io.to(senderSocketId).emit("newMessage", newMessage);
 
         res.status(201).json(newMessage);
        

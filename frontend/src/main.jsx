@@ -2,19 +2,22 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import  {ClerkProvider} from "@clerk/react"
-import { WallpaperProvider } from './context/WallpaperContext.jsx'
+import { ClerkProvider } from "@clerk/react"
+
 import { UserContextProvider } from './context/UserContext';
+import { SocketProvider } from './context/SocketContext.jsx';
 
 createRoot(document.getElementById('root')).render(
- <ClerkProvider>
-     <UserContextProvider>
 
-<WallpaperProvider>
-     <App />
-</WallpaperProvider>
-     </UserContextProvider>
+     <ClerkProvider>
+          <SocketProvider>
+               <UserContextProvider>
 
- </ClerkProvider>
- 
+                 
+                         <App />
+                 
+               </UserContextProvider>
+          </SocketProvider>
+     </ClerkProvider>
+
 )

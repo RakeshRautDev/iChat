@@ -2,7 +2,7 @@ import React from 'react'
 import ChatUser from './ChatUser'
 
 
-const SideBar = ({user,SetActiveUser,allUsers}) => {
+const SideBar = ({user,SetActiveUser,allUsers,activeUser,onlineUsers}) => {
 
   return (
     <>
@@ -12,9 +12,9 @@ const SideBar = ({user,SetActiveUser,allUsers}) => {
                 allUsers?.length>0? allUsers.map(item=>( 
                 
                 <ChatUser 
-
+activeUser={activeUser}
                 SetActiveUser={SetActiveUser}
-                
+                onlineUsers={onlineUsers}
                 key={item._id} item={item}   name={item.fullName} image={item.profilePic}
                 
                 />))
