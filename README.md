@@ -62,7 +62,7 @@ By leveraging **Express 5**, **React 19**, **Socket.IO 4**, **Mongoose 9**, and 
 - **Optimistic UI Updates**: Outgoing messages appear immediately in the local conversation state before network round-trips for zero perceived lag.
 
 ### 🟢 Live Presence & Status Tracking
-- **Heartbeat Connection Life-Cycle**: Real-time identification mapping (`clerkId` $\rightarrow$ MongoDB `_id` $\rightarrow$ active `socketId`).
+- **Heartbeat Connection Life-Cycle**: Real-time identification mapping (`clerkId` -> MongoDB `_id` -> active `socketId`).
 - **Dynamic Online Indicators**: Online badge switches in real time upon connection, heartbeat refresh, or disconnect events.
 
 ### 🖼️ Rich Media Sharing (Images & Videos)
@@ -116,26 +116,27 @@ flowchart TD
     end
 
     %% Client Interactions
-    UI -->|1. Sign in / Sessions| ClerkClient
-    ClerkClient <-->|Session JWT| Clerk
-    UI -->|2. Authenticated REST Requests| AuthMiddleware
-    SocketClient <-->|3. Bi-directional WebSocket| SocketServer
+    UI -->|"1. User Sign In"| ClerkClient
+    ClerkClient -->|"Session Token"| Clerk
+    UI -->|"2. Authenticated REST Requests"| AuthMiddleware
+    SocketClient -->|"3. WebSocket Connection"| SocketServer
+    SocketServer -->|"Push Events"| SocketClient
 
     %% Webhook sync
-    Clerk -.->|Webhook Events (user.created/updated/deleted)| WebhookCtrl
-    WebhookCtrl -->|Sync User Profile| MongoUsers
+    Clerk -->|"Webhook: user.created, updated, deleted"| WebhookCtrl
+    WebhookCtrl -->|"Sync User Record"| MongoUsers
 
     %% Message sending flow
     AuthMiddleware --> MessageCtrl
-    MessageCtrl -->|Upload Media| ImageKit
-    ImageKit -->|Return Secure URL| MessageCtrl
-    MessageCtrl -->|Persist Document| MongoMessages
-    MessageCtrl -->|Emit newMessage| SocketServer
-    SocketServer -.->|Push Message Event| SocketClient
+    MessageCtrl -->|"Upload Media"| ImageKit
+    ImageKit -->|"Return CDN URL"| MessageCtrl
+    MessageCtrl -->|"Persist Message"| MongoMessages
+    MessageCtrl -->|"Emit newMessage"| SocketServer
+    SocketServer -->|"Push Message"| SocketClient
 
     %% Message retrieval
-    MessageCtrl -->|Aggregate Conversations / Find History| MongoMessages
-    MessageCtrl -->|Lookup Contacts| MongoUsers
+    MessageCtrl -->|"Aggregate Conversations"| MongoMessages
+    MessageCtrl -->|"Lookup Contacts"| MongoUsers
 ```
 
 ### Message Dispatch Sequence
@@ -256,10 +257,10 @@ The WebSocket server attaches directly to the HTTP server instance to handle rea
 
 | Event Name | Direction | Payload | Description |
 | :--- | :---: | :--- | :--- |
-| `connection` | Client $\rightarrow$ Server | `query: { userId: "<clerkId>" }` | Initial socket connection handshake with user identity. |
-| `getOnlineUsers` | Server $\rightarrow$ Client | `string[]` (Array of MongoDB `_id`s) | Broadcasts list of currently online user IDs. |
-| `newMessage` | Server $\rightarrow$ Client | `Message` Document | Delivers incoming message instantly to the active conversation window. |
-| `disconnect` | Client $\rightarrow$ Server | None | Removes user from `userSocketMap` and re-broadcasts online status. |
+| `connection` | Client -> Server | `query: { userId: "<clerkId>" }` | Initial socket connection handshake with user identity. |
+| `getOnlineUsers` | Server -> Client | `string[]` (Array of MongoDB `_id`s) | Broadcasts list of currently online user IDs. |
+| `newMessage` | Server -> Client | `Message` Document | Delivers incoming message instantly to the active conversation window. |
+| `disconnect` | Client -> Server | None | Removes user from `userSocketMap` and re-broadcasts online status. |
 
 ---
 
@@ -349,7 +350,7 @@ To allow Clerk to communicate with your local machine when new users sign up:
    ```bash
    npx localtunnel --port 3000
    ```
-2. In your [Clerk Dashboard](https://dashboard.clerk.com/) $\rightarrow$ **Webhooks** $\rightarrow$ **Add Endpoint**:
+2. In your [Clerk Dashboard](https://dashboard.clerk.com/) > **Webhooks** > **Add Endpoint**:
    - **URL**: `https://<your-tunnel-url>/api/webhooks/clerk`
    - **Subscribe to Events**:
      - `user.created`
