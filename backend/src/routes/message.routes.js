@@ -11,7 +11,7 @@ router.use(protectedRoute)
 router.get("/users",getUsersForSidebar)
 router.get("/conversation",getConversationForSidebar)
 router.get("/:id",getMessages)
-router.post("/send/:id",upload.single("media"),sendMessages)
+router.post("/send/:id",upload.single("file"),sendMessages)
 
 
 

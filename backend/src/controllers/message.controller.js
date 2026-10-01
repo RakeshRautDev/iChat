@@ -4,6 +4,7 @@ import {hasImageKitConfig , uploadChatMedia } from "../lib/imagekit.js"
 import { getReceiverSocketId,io } from "../lib/socket.js";
 
 export const getUsersForSidebar=async(req,res,next)=>{
+    console.log(`[GET /api/messages/users] Requested by user: ${req.user?._id}`);
     try {
         const loggedInUserId=req.user._id;
 
@@ -16,6 +17,7 @@ export const getUsersForSidebar=async(req,res,next)=>{
 }
 
 export const getConversationForSidebar = async (req, res) => {
+    console.log(`[GET /api/messages/conversation] Requested by user: ${req.user?._id}`);
     try {
         const loggedInUserId = req.user._id;
 
@@ -52,7 +54,14 @@ export const getConversationForSidebar = async (req, res) => {
                 
             },
             {
-                    $replaceRoot:{newRoot:{$first:"$user"}}
+                $unwind: "$user"
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: ["$user", { lastMessageAt: "$lastMessageAt" }]
+                    }
+                }
             },
             {
                 $project:{clerkId:0}
@@ -73,6 +82,7 @@ export const getConversationForSidebar = async (req, res) => {
 };
 
 export const getMessages=async(req,res)=>{
+    console.log(`[GET /api/messages/${req.params.id}] Requested by user: ${req.user?._id}`);
     try {
         const {id:userToChatId}=req.params;
         const myId=req.user._id;
@@ -84,12 +94,14 @@ export const getMessages=async(req,res)=>{
         }).sort({createdAt:1})
         res.status(200).json(messages);
     } catch (error) {
-        
+        console.error("Error in getMessages: ", error.message);
+        res.status(500).json({message: "Internal Server Error"});
     }
 }
 
 
 export const sendMessages=async(req,res)=>{
+    console.log(`[POST /api/messages/send/${req.params.id}] Requested by user: ${req.user?._id}`);
     try {
         const{text}=req.body;
         const {id:receiverId}=req.params;

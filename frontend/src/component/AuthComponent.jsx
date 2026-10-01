@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 
 import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/react'
+import { AuthHeroPattern } from './AuthHeroPattern';
 
 const AuthComponent = () => {
 
@@ -10,13 +11,14 @@ const AuthComponent = () => {
         <div className='h-full flex'>
             
             <div className='bg-slate-900 p-8 relative h-full w-[40%] border border-black'>
-                <div className='space-y-4'>
+                <AuthHeroPattern/>
+                <div className='space-y-4 z-40000'>
                     <p className='uppercase text-slate-400 '>Secure Gateway</p>
                     <h1 className='font-bold text-white text-2xl'>OPEN ICHAT</h1>
                     <p className='uppercase text-slate-400 text-xs'>Chats, photos, and reactions stay in sync-sign in on the right to continue.</p>
                 </div>
                 <div className='  '>
-                    <img src="/auth.png" className='w-100 mx-auto ' alt="" />
+                    <img src="/auth.png" className='w-80 mx-auto ' alt="" />
                 </div>
                 <p className='absolute bottom-10 uppercase text-slate-400'>END-TO-END SESSION ENCRYPTED IN TRANSIT</p>
             </div>
